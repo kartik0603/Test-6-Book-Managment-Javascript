@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <script src="bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #f0f8ff;
+            font-family: Arial, sans-serif;
+        }
+        #dashboard-page {
+            padding: 20px;
+            margin: 50px auto;
+            max-width: 1000px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .btn-buy {
+            background-color: #28a745;
+            color: #fff;
+        }
+        .btn-buy:hover {
+            background-color: #218838;
+        }
+        .btn-bookmark {
+            background-color: #ffc107;
+            color: #fff;
+        }
+        .btn-bookmark:hover {
+            background-color: #e0a800;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar Start -->
+    <div id="navbarcontainer"></div>
+    <script type="module">
+        import Book_nav from '/components/navbar.js';
+
+        const navbarcontainer = document.getElementById('navbarcontainer');
+        navbarcontainer.innerHTML = Book_nav();
+    </script>
+    <!-- Navbar End -->
+
+    <div id="dashboard-page" class="hidden">
+        <h2>Dashboard</h2>
+       
+        <table id="dashboard-table" class="table table-striped table-bordered table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Author</th>
+                    <th>Description</th>
+                    <th>Added Date</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Buy</th>
+                    <th>Bookmark</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Book rows will be added here by JavaScript -->
+            </tbody>
+        </table>
+        <p>Total Books: <span id="total-books">0</span></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const readers = JSON.parse(localStorage.getItem('readers')) || [];
+            const tbody = document.querySelector('#dashboard-table tbody');
+            const totalBooksElement = document.getElementById('total-books');
+
+            readers.forEach(reader => {
+                const tr = document.createElement('tr');
+                
+                tr.innerHTML = `
+                    <td>${reader.bookname}</td>
+                    <td>${reader.authorname}</td>
+                    <td>${reader.bookdescription}</td>
+                    <td>${reader.date}</td>
+                    <td>${reader.category}</td>
+                    <td>$10.00</td> <!-- Placeholder price, you might want to replace this with real data -->
+                    <td><button class="btn btn-buy">Buy</button></td>
+                    <td><button class="btn btn-bookmark">Bookmark</button></td>
+                `;
+                
+                tr.querySelector('.btn-buy').addEventListener('click', () => addToBuyList(reader));
+                tr.querySelector('.btn-bookmark').addEventListener('click', () => addToBookmarkList(reader));
+
+                tbody.appendChild(tr);
+            });
+
+            totalBooksElement.textContent = readers.length;
+            document.getElementById('dashboard-page').classList.remove('hidden');
+        });
+
+        function addToBuyList(book) {
+            let buyList = JSON.parse(localStorage.getItem('buyList')) || [];
+            buyList.push(book);
+            localStorage.setItem('buyList', JSON.stringify(buyList));
+            alert('Book added to buy list');
+        }
+
+        function addToBookmarkList(book) {
+            let bookmarkList = JSON.parse(localStorage.getItem('bookmarkList')) || [];
+            bookmarkList.push(book);
+            localStorage.setItem('bookmarkList', JSON.stringify(bookmarkList));
+            alert('Book added to bookmark list');
+        }
+    </script>
+</body>
+</html>
